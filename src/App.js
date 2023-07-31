@@ -39,13 +39,27 @@ function Results({ searchFor }) {
       })();
       //
     },
-    [searchFor, page]
+    [searchFor]
   );
 
   return (
     <>
       {loading && <p style={{ textAlign: 'center' }}>Is loading</p>}
       {!loading && <Images gallery={imageList} />}
+      {!loading && (
+        <button
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: '50px',
+            width: '100px',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          Load more
+        </button>
+      )}
     </>
   );
 }
