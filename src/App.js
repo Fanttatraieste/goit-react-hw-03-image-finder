@@ -22,25 +22,40 @@ function Results({ searchFor }) {
 
   function handleImageList(list) {
     setImageList(list);
-
     setLoading(false);
   }
 
   useEffect(
     function () {
-      //
-      (async () => {
-        const results = await fetch(
-          `https://pixabay.com/api/?q=${searchFor}&page=${page}&key=${apiKEY}&image_type=photo&orientation=horizontal&per_page=12`
-        );
-        const data = await results.json();
-        console.log(data);
-        handleImageList(data.hits);
-      })();
-      //
+      fetch(
+        `https://pixabay.com/api/?q=${searchFor}&page=${page}&key=${apiKEY}&image_type=photo&orientation=horizontal&per_page=12`
+      )
+        .then(data => data.json())
+        .then(data => {
+          handleImageList(data.hits);
+        })
+        .catch(err => console.log(err));
     },
     [searchFor]
   );
+
+  useEffect(
+    function () {
+      fetch(
+        `https://pixabay.com/api/?q=${searchFor}&page=${page}&key=${apiKEY}&image_type=photo&orientation=horizontal&per_page=12`
+      )
+        .then(data => data.json())
+        .then(data => {
+          setImageList(list => [...list, ...data.hits]);
+        })
+        .catch(err => console.log(err));
+    },
+    [page]
+  );
+
+  function handleLoadMore() {
+    setPage(curr => curr + 1);
+  }
 
   return (
     <>
@@ -48,6 +63,7 @@ function Results({ searchFor }) {
       {!loading && <Images gallery={imageList} />}
       {!loading && (
         <button
+          onClick={handleLoadMore}
           style={{
             marginLeft: 'auto',
             marginRight: 'auto',
@@ -64,7 +80,40 @@ function Results({ searchFor }) {
   );
 }
 
+function unice(gallery) {
+  // vreau sa returnez o lista de elemente unice din gallery
+  // fac un hashmap pt elementele din gallery
+  // in timp ce fac hashmapul creez o noua lista
+  // adaug un element in noua lista, doar daca apare o singura data
+
+  // am aflat ca nu exista un hashmap built in
+  // super
+  // fac eu un obiect pe modelul unui hashmap
+  // cheia va fi id-ul pozei, deoarece este unic
+  // valoarea va fi frecventa pozei, contorizez de cate ori apare in gallery (de max 2 ori din cauza unui cacat pe care nu il inteleg)
+  // cand frecventa este 1, adaug poza (obiectul ce reprezinta poza) in lista noua
+  // returnez lista noua yay
+
+  const hashmap = {};
+  // initializez hashmapul cu 0
+  for (let i = 0; i < gallery.length; i++) {
+    let key = gallery[i].id;
+    hashmap[key] = 0;
+  }
+
+  // acum calculez frecventa si creez lista noua
+  let newList = [];
+  for (let i = 0; i < gallery.length; i++) {
+    let key = gallery[i].id;
+    hashmap[key] = hashmap[key] + 1;
+    if (hashmap[key] === 1) newList.push(gallery[i]);
+  }
+
+  return newList;
+}
+
 function Images({ gallery }) {
+  let list = unice(gallery);
   return (
     <ul
       style={{
@@ -77,12 +126,13 @@ function Images({ gallery }) {
         justifyContent: 'center',
       }}
     >
-      {gallery.map(image => {
+      {list.map(image => {
         return (
           <img
             style={{ width: '150px', height: '99px' }}
             key={image.id}
             src={image.previewURL}
+            alt={image.user}
           />
         );
       })}
