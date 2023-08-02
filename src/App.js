@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+const basicLightbox = require('basiclightbox');
 const apiKEY = '36919577-7ad47e31187d43bcd77a6384d';
 
 export default function App() {
@@ -24,6 +25,8 @@ function Results({ searchFor }) {
     setImageList(list);
     setLoading(false);
   }
+  // console.log('-----');
+  // console.log(imageList);
 
   useEffect(
     function () {
@@ -116,6 +119,7 @@ function unice(gallery) {
 
 function Images({ gallery }) {
   let list = unice(gallery);
+  // console.log(gallery);
   return (
     <ul
       style={{
@@ -130,15 +134,45 @@ function Images({ gallery }) {
     >
       {list.map(image => {
         return (
-          <img
-            style={{ width: '150px', height: '99px' }}
-            key={image.id}
-            src={image.previewURL}
-            alt={image.user}
-          />
+          // <img
+          //   style={{ width: '150px', height: '99px' }}
+          //   key={image.id}
+          //   src={image.previewURL}
+          //   alt={image.user}
+          // />
+          <Image image={image} />
         );
       })}
     </ul>
+  );
+}
+
+function Image({ image }) {
+  // console.log(image);
+  const [open, setOpen] = useState(false);
+
+  function handleClick() {
+    // console.log(image);
+    console.log(open);
+    const instance = basicLightbox.create(
+      `<img src=${image.largeImageURL} width="800" height="600">`
+    );
+    if (!open) {
+      instance.show();
+      setOpen(curr => !curr);
+    } else {
+      instance.close();
+      setOpen(curr => !curr);
+    }
+  }
+  return (
+    <img
+      onClick={handleClick}
+      style={{ width: '150px', height: '99px' }}
+      key={image.id}
+      src={image.previewURL}
+      alt={image.user}
+    />
   );
 }
 
@@ -184,15 +218,15 @@ function Form({ handleSearch }) {
           cursor: 'pointer',
         }}
       >
-        <svg
+        {/* <svg
           style={{
             width: '20px',
             height: '20px',
             fill: 'black',
           }}
         >
-          <use href="./svgs/symbol-defs.svg#icon-search"></use>
-        </svg>
+          {/* <use src="./svgs/symbol-defs.svg#icon-search"></use> 
+        </svg> */}
       </button>
       <input
         type="text"
