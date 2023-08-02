@@ -11,6 +11,8 @@
 
 # testing
 /coverage
+config.env
+
 
 # production
 /build
