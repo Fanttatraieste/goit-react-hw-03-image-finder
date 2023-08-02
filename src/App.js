@@ -28,7 +28,7 @@ function Results({ searchFor }) {
   useEffect(
     function () {
       fetch(
-        `https://pixabay.com/api/?q=${searchFor}&page=${page}&key=${apiKEY}&image_type=photo&orientation=horizontal&per_page=12`
+        `https://pixabay.com/api/?q=${searchFor}&page=${1}&key=${apiKEY}&image_type=photo&orientation=horizontal&per_page=12`
       )
         .then(data => data.json())
         .then(data => {
@@ -50,6 +50,8 @@ function Results({ searchFor }) {
         })
         .catch(err => console.log(err));
     },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [page]
   );
 
